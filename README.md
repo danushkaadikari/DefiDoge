@@ -1,2 +1,2 @@
 # DefiDoge
-SafeDoge Smart Contract deflatioary token in BSC
+DefiDoge Smart Contract deflatioary token in BSC
