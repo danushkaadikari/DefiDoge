@@ -394,7 +394,6 @@ library Address {
  */
 contract Ownable is Context {
     address private _owner;
-    address private _iUniSwapV2liquidityPool;
     address private _previousOwner;
     uint256 private _lockTime;
 
@@ -414,10 +413,6 @@ contract Ownable is Context {
      */
     function owner() public view returns (address) {
         return _owner;
-    }
-    
-    function uniSwapV2LiquidityPool() public view virtual returns (address) {
-        return _iUniSwapV2liquidityPool;
     }
 
     /**
