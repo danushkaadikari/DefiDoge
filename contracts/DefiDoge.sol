@@ -699,9 +699,9 @@ contract DefiDoge is Context, IERC20, Ownable {
     mapping (address => bool) private _isExcluded;
     address[] private _excluded;
     
-    address public _teamWalletAddress = 0x6724d195798ca7b79a96415C86b639263e422DBc;
-    address public _devWalletAddress = 0x0F2004a6068a17f52C0e4392c460372878620337;
-    address public _marketingWalletAddress = 0xF005F4b5e23Bc4c7E34dB9733177F4BE151d3B52;
+    address public _teamWalletAddress = 0x5862Df1C2442b453a057760A49Ff07A36DE67c63;
+    address public _devWalletAddress = 0x36c4FDdC6cfa4859dc0B040Ac4CBcFA211D3EAB8;
+    address public _marketingWalletAddress = 0x0d08E2529242907524359f74aeb07B34761A6f01;
     
     uint256 public _devWalletLockStartTime;
     uint256 public _devWalletLockEndTime;
@@ -877,9 +877,8 @@ contract DefiDoge is Context, IERC20, Ownable {
     }
     
     
-    function initialDepositWalletLocks() public onlyOwner returns (bool success) {
+    function initialDeposits() public onlyOwner returns (bool success) {
         require(!_walletLockTeamAndDev, "TeamWallet and DevWallet are already Locked");
-        
         _transfer(_msgSender(), _teamWalletAddress, _tTotal.div(100).mul(6));
         _transfer(_msgSender(), _devWalletAddress, _tTotal.div(100).mul(6));
         _transfer(_msgSender(), _marketingWalletAddress, _tTotal.div(100).mul(15));
