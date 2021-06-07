@@ -394,7 +394,6 @@ library Address {
  */
 contract Ownable is Context {
     address private _owner;
-    address private _iUniSwapV2liquidityPool;
     address private _previousOwner;
     uint256 private _lockTime;
 
